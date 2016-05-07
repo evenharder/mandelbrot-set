@@ -143,9 +143,6 @@ class GUI:
 			length=canvas_width, value=0, maximum=canvas_width, mode="determinate")
 		self.progressbar.pack()
 		self.progressbarFrame.pack()
-
-		self.creditsLabel=Label(self.root, text="Programmed by 14080 Sangheon Lee.")
-		self.creditsLabel.pack()
 		
 		self.mandelbrot=MandelbrotData(canvas_width, canvas_height)
 		self.mandelbrot.initiateArray(canvas_width, canvas_height, Decimal(-1), Decimal(1), Decimal(2)/400, Decimal(2)/400)
