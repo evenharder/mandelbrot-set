@@ -25,6 +25,7 @@ class GUI:
 		#Tk
 		self.root=Tk()
 		self.root.title("Mandelbrot Set Plotting")
+		print("Mandelbrot Set Plotting Program. Use Tk interface to create.")
 
 		#Tk image
 		self.image=Image.new('RGB', (canvas_width, canvas_height), (0, 0, 0))
@@ -185,6 +186,8 @@ class GUI:
 		sys.exit()
 		
 	def generateMandelbrot(self):
+		print("")
+		print("Start generating Mandelbrot Set.")
 		self.disableComponents()
 		
 		self.queue=queue.Queue()
@@ -204,36 +207,54 @@ class GUI:
 		unit_real=0
 		unit_imag=0
 		try:
+			print("Checking xEntry......", end="")
 			base_real=Decimal(self.xEntry.get())
 		except InvalidOperation:
+			print("invalid value "+self.xEntry.get()+".")
 			self.createErrorTk("Invalid expression on real coordinate or more.")
 			raise
+		else:
+			print("valid value "+str(self.xEntry.get())+".")
 
 		try:
+			print("Checking yEntry......", end="")
 			base_imag=Decimal(self.yEntry.get())
 		except InvalidOperation:
+			print("invalid value "+self.yEntry.get()+".")
 			self.createErrorTk("Invalid expression on imaginary coordinate or more.")
 			raise
+		else:
+			print("valid value "+str(self.yEntry.get())+".")
 
 		try:
+			print("Checking wEntry......", end="")
 			unit_real=Decimal(self.wEntry.get())/Decimal(canvas_width)
 			assert unit_real>Decimal(0)
 		except InvalidOperation:
+			print("invalid value "+self.wEntry.get()+".")
 			self.createErrorTk("Invalid expression on width.")
 			raise
 		except AssertionError:
+			print("non-positive value "+self.wEntry.get()+".")
 			self.createErrorTk("Non-positive value on width.")
 			raise
+		else:
+			print("valid value "+str(self.wEntry.get())+".")
 
 		try:
+			print("Checking hEntry......", end="")
 			unit_imag=Decimal(self.hEntry.get())/Decimal(canvas_height)
 			assert unit_real>Decimal(0)
 		except InvalidOperation:
+			print("invalid value "+self.hEntry.get()+".")
 			self.createErrorTk("Invalid expression on height.")
 			raise
 		except AssertionError:
+			print("non-positive value"+self.hEntry.get()+".")
 			self.createErrorTk("Non-positive value on height.")
 			raise
+		else:
+			print("valid value "+str(self.hEntry.get())+".")
 		
 		self.mandelbrot.initiateArray(canvas_width, canvas_height, base_real-canvas_width*unit_real/2, base_imag+canvas_height*unit_imag/2, unit_real, unit_imag)
 
@@ -246,14 +267,19 @@ class GUI:
 	def getNewValue(self):
 		iteration=0
 		try:
+			print("Checking itEntry......", end="")
 			iteration=int(self.itEntry.get())
 			assert iteration>0
 		except (ValueError, InvalidOperation):
+			print("invalid value "+self.itEntry.get()+".")
 			self.createErrorTk("Invalid expression on iteration.")
 			raise
 		except AssertionError:
+			print("non-positive value "+self.itEntry.get()+".")
 			self.createErrorTk("Non-positive value on iteration.")
 			raise
+		else:
+			print("valid value "+str(self.itEntry.get())+".")
 
 		self.iterCalc=IterationCalculator(self.queue, self.mandelbrot, iteration, 
 			self.progressbar, canvas_width, canvas_height)
@@ -263,18 +289,25 @@ class GUI:
 	def checkQueue(self):
 		try:
 			msg=self.queue.get(0)
+			print("")
 			if msg==INVALID_ENTRY:
+				print("Queue received message : "+msg)
 				return
 			elif msg==CALC_FINISHED:
+				print("Queue received message : "+msg)
 				self.draw()
 				self.isMandelbrotDrawn=True
+				self.enableComponents()
+				self.progressbar.stop()
 			elif msg is CALC_ABORTED:
 				if not self.iterCalc.is_alive():
+					print("Queue received message : "+msg)
 					self.enableComponents()
 					self.progressbar.stop()
 				else:
 					elf.root.after(50, self.checkQueue)
 			else:
+				print("Queue received message : "+msg)
 				pass
 
 		except queue.Empty:

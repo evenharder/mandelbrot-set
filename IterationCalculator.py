@@ -30,6 +30,7 @@ class IterationCalculator(Thread):
 	
 	def run(self):
 		self.max_nu=0
+		print("IterationCalculator started.")
 		while self.m.count<self.countLimit:
 			if self.m.count<self.countLimit:
 				for y in range(self.rangeLimit):
@@ -49,7 +50,18 @@ class IterationCalculator(Thread):
 				if not self.queue.empty():
 					break
 				self.m.count+=1
-				print(self.m.count)
+
+				consoleProgressbar="["
+				for i in range(20):
+					if 20*(i+1)<=self.m.count:
+						consoleProgressbar+="#"
+					else:
+						consoleProgressbar+=' '
+				consoleProgressbar+="]"
+
+				print("Progress : "+consoleProgressbar
+					+"("+str(self.m.count)+" / "+str(self.rangeLimit)+")", end="\r")
+
 				self.progressbar["value"]=self.m.count
 				#self.progressbar["text"]=str(self.m.count*100//self.rangeLimit)+"%"
 			else:
@@ -58,4 +70,3 @@ class IterationCalculator(Thread):
 		if not self.queue.empty():
 			return
 		self.queue.put_nowait(CALC_FINISHED)
-		print(str(self.max_nu))
