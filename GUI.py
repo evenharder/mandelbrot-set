@@ -143,6 +143,9 @@ class GUI:
 			length=canvas_width, value=0, maximum=canvas_width, mode="determinate")
 		self.progressbar.pack()
 		self.progressbarFrame.pack()
+
+		#self.creditsLabel=Label(self.root, text="Programmed by 14080 Sangheon Lee.")
+		#self.creditsLabel.pack()
 		
 		self.mandelbrot=MandelbrotData(canvas_width, canvas_height)
 		self.mandelbrot.initiateArray(canvas_width, canvas_height, Decimal(-1), Decimal(1), Decimal(2)/400, Decimal(2)/400)
@@ -262,12 +265,17 @@ class GUI:
 			msg=self.queue.get(0)
 			if msg==INVALID_ENTRY:
 				return
-			if msg==CALC_FINISHED:
+			elif msg==CALC_FINISHED:
 				self.draw()
 				self.isMandelbrotDrawn=True
-			if msg is not TK_TERMINATED:
-				self.enableComponents()
-				self.progressbar.stop()
+			elif msg is CALC_ABORTED:
+				if not self.iterCalc.is_alive():
+					self.enableComponents()
+					self.progressbar.stop()
+				else:
+					elf.root.after(50, self.checkQueue)
+			else:
+				pass
 
 		except queue.Empty:
 			self.root.after(50, self.checkQueue)

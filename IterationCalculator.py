@@ -29,13 +29,15 @@ class IterationCalculator(Thread):
 		pass
 	
 	def run(self):
+		self.max_nu=0
 		while self.m.count<self.countLimit:
 			if self.m.count<self.countLimit:
 				for y in range(self.rangeLimit):
-					if not self.queue.empty():
-						break
 					x=self.m.count
+
 					for i in range(self.iteration):
+						if not self.queue.empty():
+							break
 						if self.m.currentMandelbrot[x][y]<=-1:
 							if self.m.isMandelbrot(x,y):
 								self.m.currentMandelbrot[x][y]=i
@@ -53,6 +55,7 @@ class IterationCalculator(Thread):
 			else:
 				break
 
+		if not self.queue.empty():
+			return
 		self.queue.put_nowait(CALC_FINISHED)
 		print(str(self.max_nu))
-		self.max_nu=0
